@@ -84,13 +84,17 @@ int main() {
 
     // Row-major convolution (A * Ka)
     timer.restart();
+    // Iterate through ever output (x,y,z) in the 3D Grid
     for (size_t oz = 0; oz < SIZE_CONV; ++oz) {
         for (size_t oy = 0; oy < SIZE_CONV; ++oy) {
             for (size_t ox = 0; ox < SIZE_CONV; ++ox) {
                 uint64_t sum = 0;
+
+                // Slide the 3D kernel over the local window
                 for (size_t kz = 0; kz < SIZE_K; ++kz) {
                     for (size_t ky = 0; ky < SIZE_K; ++ky) {
                         for (size_t kx = 0; kx < SIZE_K; ++kx) {
+                            // Multiply the corresponding input element with the kernel element
                             sum += A[rowMajorIndexA(ox * SIZE_K + kx, oy * SIZE_K + ky, oz * SIZE_K + kz)] * Ka[rowMajorIndexK(kx, ky, kz)];
                         }
                     }
@@ -103,15 +107,23 @@ int main() {
 
     // Morton-order convolution (B * Kb)
     timer.restart();
+    // Total number of 3D regions to compute
     constexpr size_t TOTAL_BLOCKS = SIZE_CONV * SIZE_CONV * SIZE_CONV;
+    // Number of elements per 3D kernel block
     constexpr size_t BLOCK_SIZE = SIZE_K * SIZE_K * SIZE_K;
 
+    // Process each block one by one
     for (size_t block = 0; block < TOTAL_BLOCKS; ++block) {
         uint64_t sum = 0;
+
+        // Find the start address of the current block
         size_t blockOffset = block * BLOCK_SIZE;
+
+        // Perform dot product over contiguous memory elements
         for (size_t k = 0; k < BLOCK_SIZE; ++k) {
             sum += B[blockOffset + k] * Kb[k];
         }
+        // Store the result directly at the block index
         outB[block] = sum;
     }
     uint64_t timeMorton = timer.click<Timer::Micros>();
