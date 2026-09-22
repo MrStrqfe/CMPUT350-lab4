@@ -1,0 +1,7 @@
+9952
+6074
+
+Morder order is outperforming row-major order because
+the 3D sub-block of size 4x4x4 is mapped to a contiguous segment
+in memory, while the row major is accessing through jumps across memory,
+making it much slower.

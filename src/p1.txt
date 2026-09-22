@@ -1,2 +1,6 @@
-51434 347898375840389362
-34639 347898375840389362
+49459 347898375840389362
+59890 347898375840389362
+
+Both arrays are iterating through all the indexes so I expected the time to be similiar.
+Also, Row Major is faster due to cache locality, where the computer reads data from memory
+more efficently when accessed sequentially.

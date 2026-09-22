@@ -15,15 +15,22 @@ int main() {
 
     // Row Major 
     rng.seed(0);
-    uint64_t sum = 0;
     timer.restart();
     for (size_t i = 0; i < SIZE; ++i) {
         for (size_t j = 0; j < SIZE; ++j) {
             array[i * SIZE + j] = rng();
-            sum += array[i * SIZE + j];
         }
     }
     uint64_t timeRow = timer.click<Timer::Micros>();
+
+    uint64_t sum = 0;
+
+    
+    for (size_t i = 0; i < SIZE; ++i) {
+        for (size_t j = 0; j < SIZE; ++j) {
+            sum += array[i * SIZE + j];
+        }
+    }
     std::cout << timeRow << " " << sum << "\n";
 
     // Column Major
@@ -33,10 +40,16 @@ int main() {
     for (size_t i = 0; i < SIZE; ++i) {
         for (size_t j = 0; j < SIZE; ++j) {
             array[j * SIZE + i] = rng();
-            sum2 += array[j * SIZE + i];
         }
     }
     uint64_t timeCol = timer.click<Timer::Micros>();
+
+    for (size_t i = 0; i < SIZE; ++i) {
+        for (size_t j = 0; j < SIZE; ++j) {
+            sum2 += array[j * SIZE + i];
+        }
+    }
+
     std::cout << timeCol << " " << sum2 << "\n";
 
     return 0; 
